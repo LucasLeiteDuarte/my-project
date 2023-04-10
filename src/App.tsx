@@ -24,6 +24,8 @@ const creatUserFormSchema = z.object({
   password: z.string().min(6, "A senha precisa de no minimo 6 caracteres"),
 });
 
+type CreateUserFormData = z.infer<typeof creatUserFormSchema>;
+
 export function App() {
   const [output, setOutput] = useState("");
 
@@ -31,7 +33,7 @@ export function App() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<CreateUserFormData>({
     resolver: zodResolver(creatUserFormSchema),
   });
 
