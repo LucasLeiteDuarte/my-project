@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 /**
  * to-do
  *
- * [ ] Validação / Transformação- para começar a trabalhar com validação é preciso importar o zod.
+ * [x] Validação / Transformação- para começar a trabalhar com validação é preciso importar o zod.
  * [ ] Field Array-
  * [ ] Upload de Arquivos-
  * [ ] Composition Pattern-
@@ -17,10 +17,25 @@ import { zodResolver } from "@hookform/resolvers/zod";
 const creatUserFormSchema = z.object({
   //Schema: Nada mais é do que uma representação de uma estrutura de dados dados.
   // O zod, permite que façamos algumas validações, ex.: .nonempty('O E-mail é obrigatório')
+  name: z
+    .string()
+    .nonempty("O nome é obrigatório")
+    .transform((name) => {
+      return name
+        .trim() // (.trim)remove qulquer espaçamento deixado na esqueda ou direta.
+        .split(" ") // (.splite (' ')splite no espaço (_) dividir o nome do sobre nome, caso tenha.
+        .map((word) => {
+          return word[0].toLocaleUpperCase().concat(word.substring(1));
+        })
+        .join(" ");
+    }),
   email: z
     .string()
     .nonempty("O E-mail é obrigatório")
-    .email("Formato de E-mail inválido"),
+    .email("Formato de E-mail inválido")
+    .refine((email) => {
+      return email.endsWith("@gmail.com");
+    }, "O e-mail precisa ser do google"),
   password: z.string().min(6, "A senha precisa de no minimo 6 caracteres"),
 });
 
@@ -62,7 +77,18 @@ export function App() {
         className="flex flex-col gap-4 w-full max-w-xs"
       >
         <div className="flex flex-col gap-1">
-          <label htmlFor="">E-mail</label>
+          <label htmlFor="name">Name</label>
+          <input
+            type="name"
+            // name="name" não precisa mais, ja que tem o ...register(name)
+            className="border border-zinc-200 shadow-sm rounded h-10 px-3"
+            {...register("name")}
+          />
+          {errors.name && <span>{errors.name.message}</span>}
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="email">E-mail</label>
           <input
             type="email"
             // name="email" não precisa mais, ja que tem o ...register(email)
@@ -73,7 +99,7 @@ export function App() {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="">Senha</label>
+          <label htmlFor="password">Senha</label>
           <input
             type="password"
             // name="password"  não é mais necessario...register(passowrd)
