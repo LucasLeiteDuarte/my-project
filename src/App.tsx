@@ -75,7 +75,7 @@ export function App() {
     append({ title: "", knowledge: 0 });
   }
 
-  function creatUser(data: any) {
+  function creatUser(data: CreateUserFormData) {
     /* Ao inves de usar um conslo.log()
    com os dados do formulário vou colocar os dados em um estado(UseState)
    para ficar mais fácil mostrando em tela */
